@@ -1,7 +1,21 @@
-import { Container, Typography, Button, TextField, Box } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  TextField,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
 import "./App.css";
 import { useForm } from "react-hook-form";
 import useTodoAPI from "./api/useTodoAPI";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function App() {
   const { register, handleSubmit } = useForm<AddTask>();
@@ -15,31 +29,61 @@ function App() {
       </Typography>
       <form onSubmit={handleSubmit((event) => addTodo(event))}>
         <TextField {...register("todo")} type="text" size="small" />
-        <Button type="submit" variant="contained">
+        <Button sx={{ ml: 2 }} type="submit" variant="contained">
           Add
         </Button>
       </form>
 
-      <Box>
-        {
-          todos.map((todo) => (
-            <Box key={todo.id} sx={{ display: "flex" }}>
-              <p>id: {todo.id}</p>
-              <p>name: {todo.name}</p>
-              <p>date: {todo.date}</p>
-              <Button variant="contained">Edit</Button>
-              {/* <Button onClick={() => deleteTodo(todo.id)} variant="contained">
-                delete
-              </Button> */}
-            </Box>
-          ))
-        }
-      </Box>
+      <TableContainer component={Paper} sx={{ mt: 4 }}>
+        <Table sx={{ minWidth: 650 }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Todo name</TableCell>
+              <TableCell>Created date</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {todos.map((todo) => (
+              <TableRow key={todo.id}>
+                <TableCell>{todo.todo}</TableCell>
+                <TableCell>{changeUnixToDate(todo.created_at)}</TableCell>
+                <TableCell>
+                  <Button variant="contained" color="success">
+                    <EditIcon />
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() => deleteTodo(todo.id)}
+                    variant="contained"
+                    color="error"
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Container>
   );
 }
 
 export default App;
+
+function changeUnixToDate(date: number) {
+  const daysSinceEpoch = new Date(date * 24 * 60 * 60 * 1000);
+  const formattedDate =
+    (daysSinceEpoch.getMonth() + 1).toString().padStart(2, "0") +
+    "/" +
+    daysSinceEpoch.getDate().toString().padStart(2, "0") +
+    "/" +
+    daysSinceEpoch.getFullYear().toString();
+  return formattedDate;
+}
 
 // const [file, setFile] = useState<File | null>(null);
 {

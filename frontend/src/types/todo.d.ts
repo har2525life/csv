@@ -1,6 +1,7 @@
 type Todos = {
-    id: number;
-    name: string;
-    date: number;
+    id: string;
+    todo: string;
+    created_at: number;
+    compleated: number;
   };
   
